@@ -5,10 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using AW.Common.GuardToolkit;
 using AW.Common.PersianToolkit;
 using AW.Entities.AuditableEntity;
@@ -164,5 +162,12 @@ namespace AW.DataLayer.Context
                 throw new InvalidOperationException(errors);
             }
         }
+
+        public void MarkAsDeleted<TEntity>(TEntity entity) where TEntity : class
+        {
+            Entry(entity).State = EntityState.Deleted;
+        }
+
+      
     }
 }
