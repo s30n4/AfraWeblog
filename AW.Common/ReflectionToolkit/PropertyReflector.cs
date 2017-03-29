@@ -17,8 +17,8 @@ namespace AW.Common.ReflectionToolkit
     {
         private const char PropertyNameSeparator = '.';
 
-        private static readonly object[] _noParams = new object[0];
-        private static readonly Type[] _noTypeParams = new Type[0];
+        private static readonly object[] NoParams = new object[0];
+        private static readonly Type[] NoTypeParams = new Type[0];
 
         private readonly IDictionary<Type, PropertyInfoCache> _propertyCache = new Dictionary<Type, PropertyInfoCache>();
         private readonly IDictionary<Type, ConstructorInfo> _constructorCache = new Dictionary<Type, ConstructorInfo>();
@@ -149,7 +149,7 @@ namespace AW.Common.ReflectionToolkit
         /// <returns>the value of the given property on the target instance</returns>
         private object GetValueImpl(object target, string propertyName)
         {
-            return GetPropertyInfo(target.GetType(), propertyName).GetValue(target, _noParams);
+            return GetPropertyInfo(target.GetType(), propertyName).GetValue(target, NoParams);
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace AW.Common.ReflectionToolkit
         /// <param name="value">the value to set on the target</param>
         private void SetValueImpl(object target, string propertyName, object value)
         {
-            GetPropertyInfo(target.GetType(), propertyName).SetValue(target, value, _noParams);
+            GetPropertyInfo(target.GetType(), propertyName).SetValue(target, value, NoParams);
         }
 
         /// <summary>
@@ -279,7 +279,7 @@ namespace AW.Common.ReflectionToolkit
                 {
                     if (!_constructorCache.ContainsKey(type))
                     {
-                        ConstructorInfo constructorInfo = type.GetConstructor(_noTypeParams);
+                        ConstructorInfo constructorInfo = type.GetConstructor(NoTypeParams);
                         if (constructorInfo == null)
                         {
                             throw new Exception(string.Format(CultureInfo.InvariantCulture, "Unable to construct instance, no parameterless constructor found in type {0}", type.FullName));
@@ -289,7 +289,7 @@ namespace AW.Common.ReflectionToolkit
                     }
                 }
             }
-            return _constructorCache[type].Invoke(_noParams);
+            return _constructorCache[type].Invoke(NoParams);
         }
     }
 
@@ -301,27 +301,27 @@ namespace AW.Common.ReflectionToolkit
     /// </summary>
     internal class PropertyInfoCache
     {
-        private readonly IDictionary<string, PropertyInfo> propertyInfoCache;
+        private readonly IDictionary<string, PropertyInfo> _propertyInfoCache;
 
         public PropertyInfoCache()
         {
-            propertyInfoCache = new Dictionary<string, PropertyInfo>();
+            _propertyInfoCache = new Dictionary<string, PropertyInfo>();
         }
 
         public bool ContainsKey(string key)
         {
-            return propertyInfoCache.ContainsKey(key);
+            return _propertyInfoCache.ContainsKey(key);
         }
 
         public void Add(string key, PropertyInfo value)
         {
-            propertyInfoCache.Add(key, value);
+            _propertyInfoCache.Add(key, value);
         }
 
         public PropertyInfo this[string key]
         {
-            get { return propertyInfoCache[key]; }
-            set { propertyInfoCache[key] = value; }
+            get { return _propertyInfoCache[key]; }
+            set { _propertyInfoCache[key] = value; }
         }
     }
 }

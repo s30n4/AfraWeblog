@@ -27,7 +27,7 @@ namespace AW.Common.WebToolkit
             var file = value as IFormFile;
             if (file != null)
             {
-                return isValidFile(file);
+                return IsValidFile(file);
             }
 
             var files = value as IList<IFormFile>;
@@ -38,13 +38,13 @@ namespace AW.Common.WebToolkit
 
             foreach (var postedFile in files)
             {
-                if (!isValidFile(postedFile)) return false;
+                if (!IsValidFile(postedFile)) return false;
             }
 
             return true;
         }
 
-        private bool isValidFile(IFormFile file)
+        private bool IsValidFile(IFormFile file)
         {
             if (file == null || file.Length == 0)
             {

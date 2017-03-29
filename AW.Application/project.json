@@ -5,6 +5,7 @@
     "AutoMapper": "6.0.2",
     "AW.DataLayer": "1.0.0-*",
     "AW.Entities": "1.0.0-*",
+    "Microsoft.EntityFrameworkCore": "1.1.1",
     "NETStandard.Library": "1.6.1"
   },
 

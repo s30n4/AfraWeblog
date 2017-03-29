@@ -65,7 +65,7 @@ namespace AW.Common.WebToolkit
                     currentController = new MvcControllerViewModel
                     {
                         AreaName = controllerTypeInfo.GetCustomAttribute<AreaAttribute>()?.RouteValue,
-                        ControllerAttributes = getAttributes(controllerTypeInfo),
+                        ControllerAttributes = GetAttributes(controllerTypeInfo),
                         ControllerDisplayName = controllerTypeInfo.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName,
                         ControllerName = descriptor.ControllerName,
                     };
@@ -79,8 +79,8 @@ namespace AW.Common.WebToolkit
                     ControllerId = currentController.ControllerId,
                     ActionName = descriptor.ActionName,
                     ActionDisplayName = actionMethodInfo.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName,
-                    ActionAttributes = getAttributes(actionMethodInfo),
-                    IsSecuredAction = isSecuredAction(controllerTypeInfo, actionMethodInfo)
+                    ActionAttributes = GetAttributes(actionMethodInfo),
+                    IsSecuredAction = IsSecuredAction(controllerTypeInfo, actionMethodInfo)
                 });
             }
         }
@@ -107,7 +107,7 @@ namespace AW.Common.WebToolkit
             return getter.Value;
         }
 
-        private static List<Attribute> getAttributes(MemberInfo actionMethodInfo)
+        private static List<Attribute> GetAttributes(MemberInfo actionMethodInfo)
         {
             return actionMethodInfo.GetCustomAttributes(inherit: true)
                                    .Where(attribute =>
@@ -119,7 +119,7 @@ namespace AW.Common.WebToolkit
                                    .ToList();
         }
 
-        private static bool isSecuredAction(MemberInfo controllerTypeInfo, MemberInfo actionMethodInfo)
+        private static bool IsSecuredAction(MemberInfo controllerTypeInfo, MemberInfo actionMethodInfo)
         {
             var actionHasAllowAnonymousAttribute = actionMethodInfo.GetCustomAttribute<AllowAnonymousAttribute>(inherit: true) != null;
             if (actionHasAllowAnonymousAttribute)

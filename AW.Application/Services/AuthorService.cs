@@ -8,8 +8,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -33,28 +31,25 @@ namespace AW.Application.Services
 
 
         public async Task<ServiceResult<int>> AddAuthor(AuthorDto data, int id = 0)
-        { 
+        {
+            if (data == null) return ServiceResult<int>.Failed(new ServiceMessage {Description = "data is null"});
             Author aut;
-            if (data != null)
+            if (id == 0)
             {
-                if (id == 0)
-                {
-                   aut = MapperEngine.Map<Author>(data);
-                   _dbSet.Add(aut);                    
-                }
-                else
-                {
-                    aut = _dbSet.SingleOrDefault(a => a.Id == id);
-                    if (aut == null) return ServiceResult<int>.Failed(new ServiceMessage { Description = "id is incorrect" });
-
-                    Mapper.Map(data, aut);
-                    _dbSet.Update(aut);
-                }
-
-                var res = await UnitOfWork.SaveChangesAsync();
-                return ServiceResult<int>.Success(res);
+                aut = MapperEngine.Map<Author>(data);
+                _dbSet.Add(aut);                    
             }
-            return ServiceResult<int>.Failed(new ServiceMessage { Description = "data is null" });
+            else
+            {
+                aut = _dbSet.SingleOrDefault(a => a.Id == id);
+                if (aut == null) return ServiceResult<int>.Failed(new ServiceMessage { Description = "id is incorrect" });
+
+                Mapper.Map(data, aut);
+                _dbSet.Update(aut);
+            }
+
+            var res = await UnitOfWork.SaveChangesAsync();
+            return ServiceResult<int>.Success(res);
         }
 
         //public async Task<ServiceResult<SystemListDto>> GetAsync(BaseSearchRequest searchRequest)
