@@ -9,12 +9,12 @@ namespace AW.Application.AutomapperProfile
     {
         public ContentProfile()
         {
-            CreateMap<ContentAddDto, NewsContent>()
-                .ForMember(dest => dest.SubmitDate, opt => opt.MapFrom(src => DateTime.Now));
+            CreateMap<ContentAddDto, NewsContent>();
 
             CreateMap<NewsContent, ContentOutputDto>()
                 .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Authors.Name))
-                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.NewsCategories.Name));
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.NewsCategories.Name))
+                .ForMember(dest => dest.SubmitDate, opt => opt.MapFrom(src => CommonFunction.ConvertToShamsi(src.SubmitDate)));
         }
     }
 }

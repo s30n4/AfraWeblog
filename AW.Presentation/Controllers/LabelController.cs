@@ -1,30 +1,34 @@
-﻿using AW.Application.Dtos.Author;
-using AW.Application.Services.Contracts;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using AW.Application.Services.Contracts;
+using AW.Application.Dtos.Label;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace AW.Presentation.Controllers
 {
-    [Route("api/Author")]
-    public class AuthorController : Controller
+    [Route("api/Label")]
+    public class LabelController : Controller
     {
-        private readonly IAuthor _aut;
+        private readonly ILabel _lab;
 
-        public AuthorController(IAuthor aut)
+        public LabelController(ILabel lab)
         {
-            _aut = aut;
+            _lab = lab;
         }
 
-        // Get: api/Author/{}
+        // Get: api/Label/{}
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var result = _aut.GetById(id);
+            var result = _lab.GetById(id);
             return Json(result);
         }
 
-        //// Get: api/System/{}
+        //// Get: api/Label/{}
         //[HttpGet]
         //public IActionResult Get(BaseSearchRequest data)
         //{
@@ -32,27 +36,27 @@ namespace AW.Presentation.Controllers
         //    return Json(result);
         //}
 
-        // POST api/Author
+        // POST api/Label
         [HttpPost]
-        public IActionResult Post([FromBody] AuthorDto data)
+        public IActionResult Post([FromBody] LabelDto data)
         {
-            var result = _aut.AddAsync(data);
+            var result = _lab.AddAsync(data);
             return Json(result);
         }
 
-        // Put api/Author
+        // Put api/Label
         [HttpPut("{id}")]
-        public IActionResult Put(int id,[FromBody] AuthorDto data)
+        public IActionResult Put(int id, [FromBody] LabelDto data)
         {
-            var result = _aut.AddAsync(data, id);
+            var result = _lab.AddAsync(data, id);
             return Json(result);
         }
 
-        // POST api/Author
+        // POST api/Label
         [HttpDelete]
         public IActionResult Delete(int id)
         {
-            var result = _aut.DeleteById(id);
+            var result = _lab.DeleteById(id);
             return Json(result);
         }
     }

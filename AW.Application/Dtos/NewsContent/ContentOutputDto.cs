@@ -19,6 +19,6 @@ namespace AW.Application.Dtos.NewsContent
 
         public string AuthorName { get; set; }
 
-        public string SubmitData { get; set; }
+        public string SubmitDate { get; set; }
     }
 }

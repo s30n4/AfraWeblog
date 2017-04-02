@@ -3,8 +3,7 @@
 namespace AW.Application.Dtos.NewsContent
 {
     public class ContentAddDto
-    {
-        public int Id { get; set; }
+    {        
 
         [MaxLength(200)]
         public string Subject { get; set; }

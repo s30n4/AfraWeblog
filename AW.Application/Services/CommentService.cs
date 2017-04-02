@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using AW.Application.Dtos.Author;
+using AW.Application.Dtos.Comment;
 using AW.Application.Services.Contracts;
 using AW.Common;
 using AW.DataLayer.Context;
@@ -9,45 +9,49 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace AW.Application.Services
 {
-    public class AuthorService: IAuthor
+    public class CommentService: IComment
     {
-        private const string EntityName = "Authors";
+        private const string EntityName = "Comments";
 
-        private readonly DbSet<Author> _dbSet;
+        private readonly DbSet<Comment> _dbSet;
         private IUnitOfWork UnitOfWork { get; set; }
         private IMapper MapperEngine { get; set; }
 
-        public AuthorService(IMapper mapper, IHttpContextAccessor httpContextAccessor
+        public CommentService(IMapper mapper, IHttpContextAccessor httpContextAccessor
             , IHostingEnvironment hostingEnvironment, ILogger<ApplicationDbContextBase> logger)
-        { 
+        {
             MapperEngine = mapper;
             UnitOfWork = new ApplicationDbContext(httpContextAccessor, hostingEnvironment, logger);
-            _dbSet = UnitOfWork.Set<Author>();
+            _dbSet = UnitOfWork.Set<Comment>();
         }
 
 
-        public async Task<ServiceResult<int>> AddAsync(AuthorDto data, int id = 0)
+        public async Task<ServiceResult<int>> AddAsync(CommentAddDto data, int id = 0)
         {
-            if (data == null) return ServiceResult<int>.Failed(new ServiceMessage {Description = "data is null"});
-            Author aut;
+            if (data == null) return ServiceResult<int>.Failed(new ServiceMessage { Description = "data is null" });
+            Comment comm;
             if (id == 0)
             {
-                aut = MapperEngine.Map<Author>(data);
-                _dbSet.Add(aut);                    
+                comm = MapperEngine.Map<Comment>(data);
+                comm.SubmitDate = DateTime.Now;
+                comm.IsConfirm = false;
+                _dbSet.Add(comm);
             }
             else
             {
-                aut = _dbSet.SingleOrDefault(a => a.Id == id);
-                if (aut == null) return ServiceResult<int>.Failed(new ServiceMessage { Description = "id is incorrect" });
+                comm = _dbSet.SingleOrDefault(a => a.Id == id);
+                if (comm == null) return ServiceResult<int>.Failed(new ServiceMessage { Description = "id is incorrect" });
 
-                Mapper.Map(data, aut);
-                aut.Id = id;
-                _dbSet.Update(aut);
+                Mapper.Map(data, comm);
+                comm.Id = id;
+                _dbSet.Update(comm);
             }
 
             var res = await UnitOfWork.SaveChangesAsync();
@@ -69,10 +73,23 @@ namespace AW.Application.Services
         //    return ServiceResult<SystemListDto>.Success(systems);
         //}
 
-        public ServiceResult<AuthorDto> GetById(int id)
+        public ServiceResult<CommentOutputDto> GetById(int id)
         {
-            var query = _dbSet.Where(a => a.Id == id).ProjectTo<AuthorDto>(MapperEngine).FirstOrDefault(); 
-            return ServiceResult<AuthorDto>.Success(query);
+            var query = _dbSet.Where(a => a.Id == id).ProjectTo<CommentOutputDto>(MapperEngine).FirstOrDefault();
+            return ServiceResult<CommentOutputDto>.Success(query);
+        }
+
+        public ServiceResult<int> Confirm(CommentConfirmDto data)
+        {
+            if (data == null) return ServiceResult<int>.Failed(new ServiceMessage { Description = "data is null" });
+            int res = 0;
+            var query = _dbSet.Where(a => a.Id == data.Id).FirstOrDefault();
+            if (query != null)
+            {
+                query.IsConfirm = data.IsConfirm;
+                _dbSet.Update(query);
+            }
+            return ServiceResult<int>.Success(res);
         }
 
         public ServiceResult<int> DeleteById(int id)

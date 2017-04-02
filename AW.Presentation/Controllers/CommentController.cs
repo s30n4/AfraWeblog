@@ -1,26 +1,30 @@
-﻿using AW.Application.Dtos.Author;
-using AW.Application.Services.Contracts;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using AW.Application.Services.Contracts;
+using AW.Application.Dtos.Comment;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace AW.Presentation.Controllers
 {
-    [Route("api/Author")]
-    public class AuthorController : Controller
+    [Route("api/Comment")]
+    public class CommentController : Controller
     {
-        private readonly IAuthor _aut;
+        private readonly IComment _com;
 
-        public AuthorController(IAuthor aut)
+        public CommentController(IComment com)
         {
-            _aut = aut;
+            _com = com;
         }
 
         // Get: api/Author/{}
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var result = _aut.GetById(id);
+            var result = _com.GetById(id);
             return Json(result);
         }
 
@@ -34,17 +38,25 @@ namespace AW.Presentation.Controllers
 
         // POST api/Author
         [HttpPost]
-        public IActionResult Post([FromBody] AuthorDto data)
+        public IActionResult Post([FromBody] CommentAddDto data)
         {
-            var result = _aut.AddAsync(data);
+            var result = _com.AddAsync(data);
             return Json(result);
         }
 
         // Put api/Author
         [HttpPut("{id}")]
-        public IActionResult Put(int id,[FromBody] AuthorDto data)
+        public IActionResult Put(int id, [FromBody] CommentAddDto data)
         {
-            var result = _aut.AddAsync(data, id);
+            var result = _com.AddAsync(data, id);
+            return Json(result);
+        }
+
+        // Put api/Author
+        [HttpPut("Confirm")]
+        public IActionResult Confirm( [FromBody] CommentConfirmDto data)
+        {
+            var result = _com.Confirm(data);
             return Json(result);
         }
 
@@ -52,7 +64,7 @@ namespace AW.Presentation.Controllers
         [HttpDelete]
         public IActionResult Delete(int id)
         {
-            var result = _aut.DeleteById(id);
+            var result = _com.DeleteById(id);
             return Json(result);
         }
     }

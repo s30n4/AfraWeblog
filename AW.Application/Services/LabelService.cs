@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using AW.Application.Dtos.Author;
+using AW.Application.Dtos.Label;
 using AW.Application.Services.Contracts;
 using AW.Common;
 using AW.DataLayer.Context;
@@ -9,45 +9,47 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace AW.Application.Services
 {
-    public class AuthorService: IAuthor
+    public class LabelService: ILabel
     {
-        private const string EntityName = "Authors";
+        private const string EntityName = "Labels";
 
-        private readonly DbSet<Author> _dbSet;
+        private readonly DbSet<Label> _dbSet;
         private IUnitOfWork UnitOfWork { get; set; }
         private IMapper MapperEngine { get; set; }
 
-        public AuthorService(IMapper mapper, IHttpContextAccessor httpContextAccessor
+        public LabelService(IMapper mapper, IHttpContextAccessor httpContextAccessor
             , IHostingEnvironment hostingEnvironment, ILogger<ApplicationDbContextBase> logger)
-        { 
+        {
             MapperEngine = mapper;
             UnitOfWork = new ApplicationDbContext(httpContextAccessor, hostingEnvironment, logger);
-            _dbSet = UnitOfWork.Set<Author>();
+            _dbSet = UnitOfWork.Set<Label>();
         }
 
 
-        public async Task<ServiceResult<int>> AddAsync(AuthorDto data, int id = 0)
+        public async Task<ServiceResult<int>> AddAsync(LabelDto data, int id = 0)
         {
-            if (data == null) return ServiceResult<int>.Failed(new ServiceMessage {Description = "data is null"});
-            Author aut;
+            if (data == null) return ServiceResult<int>.Failed(new ServiceMessage { Description = "data is null" });
+            Label lab;
             if (id == 0)
             {
-                aut = MapperEngine.Map<Author>(data);
-                _dbSet.Add(aut);                    
+                lab = MapperEngine.Map<Label>(data);
+                _dbSet.Add(lab);
             }
             else
             {
-                aut = _dbSet.SingleOrDefault(a => a.Id == id);
-                if (aut == null) return ServiceResult<int>.Failed(new ServiceMessage { Description = "id is incorrect" });
+                lab = _dbSet.SingleOrDefault(a => a.Id == id);
+                if (lab == null) return ServiceResult<int>.Failed(new ServiceMessage { Description = "id is incorrect" });
 
-                Mapper.Map(data, aut);
-                aut.Id = id;
-                _dbSet.Update(aut);
+                Mapper.Map(data, lab);
+                lab.Id = id;
+                _dbSet.Update(lab);
             }
 
             var res = await UnitOfWork.SaveChangesAsync();
@@ -69,10 +71,10 @@ namespace AW.Application.Services
         //    return ServiceResult<SystemListDto>.Success(systems);
         //}
 
-        public ServiceResult<AuthorDto> GetById(int id)
+        public ServiceResult<LabelDto> GetById(int id)
         {
-            var query = _dbSet.Where(a => a.Id == id).ProjectTo<AuthorDto>(MapperEngine).FirstOrDefault(); 
-            return ServiceResult<AuthorDto>.Success(query);
+            var query = _dbSet.Where(a => a.Id == id).ProjectTo<LabelDto>(MapperEngine).FirstOrDefault();
+            return ServiceResult<LabelDto>.Success(query);
         }
 
         public ServiceResult<int> DeleteById(int id)

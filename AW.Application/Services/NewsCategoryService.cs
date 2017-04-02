@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using AW.Application.Dtos.Author;
+using AW.Application.Dtos.NewsCategory;
 using AW.Application.Services.Contracts;
 using AW.Common;
 using AW.DataLayer.Context;
@@ -9,45 +9,45 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace AW.Application.Services
 {
-    public class AuthorService: IAuthor
+    public class NewsCategoryService: INewsCategory
     {
-        private const string EntityName = "Authors";
+        private const string EntityName = "NewsCategories";
 
-        private readonly DbSet<Author> _dbSet;
+        private readonly DbSet<NewsCategory> _dbSet;
         private IUnitOfWork UnitOfWork { get; set; }
         private IMapper MapperEngine { get; set; }
 
-        public AuthorService(IMapper mapper, IHttpContextAccessor httpContextAccessor
+        public NewsCategoryService(IMapper mapper, IHttpContextAccessor httpContextAccessor
             , IHostingEnvironment hostingEnvironment, ILogger<ApplicationDbContextBase> logger)
-        { 
+        {
             MapperEngine = mapper;
             UnitOfWork = new ApplicationDbContext(httpContextAccessor, hostingEnvironment, logger);
-            _dbSet = UnitOfWork.Set<Author>();
+            _dbSet = UnitOfWork.Set<NewsCategory>();
         }
 
-
-        public async Task<ServiceResult<int>> AddAsync(AuthorDto data, int id = 0)
+        public async Task<ServiceResult<int>> AddAsync(NewsCategoryDto data, int id = 0)
         {
-            if (data == null) return ServiceResult<int>.Failed(new ServiceMessage {Description = "data is null"});
-            Author aut;
+            if (data == null) return ServiceResult<int>.Failed(new ServiceMessage { Description = "data is null" });
+            NewsCategory category;
             if (id == 0)
             {
-                aut = MapperEngine.Map<Author>(data);
-                _dbSet.Add(aut);                    
+                category = MapperEngine.Map<NewsCategory>(data);
+                _dbSet.Add(category);
             }
             else
             {
-                aut = _dbSet.SingleOrDefault(a => a.Id == id);
-                if (aut == null) return ServiceResult<int>.Failed(new ServiceMessage { Description = "id is incorrect" });
+                category = _dbSet.SingleOrDefault(a => a.Id == id);
+                if (category == null) return ServiceResult<int>.Failed(new ServiceMessage { Description = "id is incorrect" });
 
-                Mapper.Map(data, aut);
-                aut.Id = id;
-                _dbSet.Update(aut);
+                Mapper.Map(data, category);
+                _dbSet.Update(category);
             }
 
             var res = await UnitOfWork.SaveChangesAsync();
@@ -69,22 +69,24 @@ namespace AW.Application.Services
         //    return ServiceResult<SystemListDto>.Success(systems);
         //}
 
-        public ServiceResult<AuthorDto> GetById(int id)
+        public ServiceResult<NewsCategoryDto> GetById(int id)
         {
-            var query = _dbSet.Where(a => a.Id == id).ProjectTo<AuthorDto>(MapperEngine).FirstOrDefault(); 
-            return ServiceResult<AuthorDto>.Success(query);
+            var query = _dbSet.Where(a => a.Id == id).ProjectTo<NewsCategoryDto>(MapperEngine).FirstOrDefault();
+            return ServiceResult<NewsCategoryDto>.Success(query);
         }
 
         public ServiceResult<int> DeleteById(int id)
         {
             int res = 0;
             var query = _dbSet.Where(a => a.Id == id).FirstOrDefault();
-            if (query != null)
+            if (query != null && query.Id!=1)
             {
+                //Update to Uncategory
                 _dbSet.Remove(query);
                 res = query.Id;
             }
             return ServiceResult<int>.Success(res);
         }
+
     }
 }

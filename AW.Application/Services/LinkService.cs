@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using AW.Application.Dtos.Author;
+using AW.Application.Dtos.Link;
 using AW.Application.Services.Contracts;
 using AW.Common;
 using AW.DataLayer.Context;
@@ -9,45 +9,47 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace AW.Application.Services
 {
-    public class AuthorService: IAuthor
+    public class LinkService: ILink
     {
-        private const string EntityName = "Authors";
+        private const string EntityName = "Links";
 
-        private readonly DbSet<Author> _dbSet;
+        private readonly DbSet<Link> _dbSet;
         private IUnitOfWork UnitOfWork { get; set; }
         private IMapper MapperEngine { get; set; }
 
-        public AuthorService(IMapper mapper, IHttpContextAccessor httpContextAccessor
+        public LinkService(IMapper mapper, IHttpContextAccessor httpContextAccessor
             , IHostingEnvironment hostingEnvironment, ILogger<ApplicationDbContextBase> logger)
-        { 
+        {
             MapperEngine = mapper;
             UnitOfWork = new ApplicationDbContext(httpContextAccessor, hostingEnvironment, logger);
-            _dbSet = UnitOfWork.Set<Author>();
+            _dbSet = UnitOfWork.Set<Link>();
         }
 
 
-        public async Task<ServiceResult<int>> AddAsync(AuthorDto data, int id = 0)
+        public async Task<ServiceResult<int>> AddAsync(LinkDto data, int id = 0)
         {
-            if (data == null) return ServiceResult<int>.Failed(new ServiceMessage {Description = "data is null"});
-            Author aut;
+            if (data == null) return ServiceResult<int>.Failed(new ServiceMessage { Description = "data is null" });
+            Link lin;
             if (id == 0)
             {
-                aut = MapperEngine.Map<Author>(data);
-                _dbSet.Add(aut);                    
+                lin = MapperEngine.Map<Link>(data);
+                _dbSet.Add(lin);
             }
             else
             {
-                aut = _dbSet.SingleOrDefault(a => a.Id == id);
-                if (aut == null) return ServiceResult<int>.Failed(new ServiceMessage { Description = "id is incorrect" });
+                lin = _dbSet.SingleOrDefault(a => a.Id == id);
+                if (lin == null) return ServiceResult<int>.Failed(new ServiceMessage { Description = "id is incorrect" });
 
-                Mapper.Map(data, aut);
-                aut.Id = id;
-                _dbSet.Update(aut);
+                Mapper.Map(data, lin);
+                lin.Id = id;
+                _dbSet.Update(lin);
             }
 
             var res = await UnitOfWork.SaveChangesAsync();
@@ -69,10 +71,10 @@ namespace AW.Application.Services
         //    return ServiceResult<SystemListDto>.Success(systems);
         //}
 
-        public ServiceResult<AuthorDto> GetById(int id)
+        public ServiceResult<LinkDto> GetById(int id)
         {
-            var query = _dbSet.Where(a => a.Id == id).ProjectTo<AuthorDto>(MapperEngine).FirstOrDefault(); 
-            return ServiceResult<AuthorDto>.Success(query);
+            var query = _dbSet.Where(a => a.Id == id).ProjectTo<LinkDto>(MapperEngine).FirstOrDefault();
+            return ServiceResult<LinkDto>.Success(query);
         }
 
         public ServiceResult<int> DeleteById(int id)
