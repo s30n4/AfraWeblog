@@ -12,7 +12,7 @@ namespace AW.Application
             if (!miladi.HasValue)
                 return null;
 
-            PersianCalendar pc = new PersianCalendar();
+            var pc = new PersianCalendar();
             return string.Format("{0} {1} {2} {3}", pc.GetYear(miladi.Value), GetNameMonth(pc.GetMonth(miladi.Value)), pc.GetDayOfMonth(miladi.Value), GetWeekDay(pc.GetDayOfWeek(miladi.Value)));
         }
 

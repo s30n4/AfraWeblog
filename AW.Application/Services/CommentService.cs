@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -82,8 +81,8 @@ namespace AW.Application.Services
         public ServiceResult<int> Confirm(CommentConfirmDto data)
         {
             if (data == null) return ServiceResult<int>.Failed(new ServiceMessage { Description = "data is null" });
-            int res = 0;
-            var query = _dbSet.Where(a => a.Id == data.Id).FirstOrDefault();
+            var res = 0;
+            var query = _dbSet.FirstOrDefault(a => a.Id == data.Id);
             if (query != null)
             {
                 query.IsConfirm = data.IsConfirm;
@@ -94,8 +93,8 @@ namespace AW.Application.Services
 
         public ServiceResult<int> DeleteById(int id)
         {
-            int res = 0;
-            var query = _dbSet.Where(a => a.Id == id).FirstOrDefault();
+            var res = 0;
+            var query = _dbSet.FirstOrDefault(a => a.Id == id);
             if (query != null)
             {
                 _dbSet.Remove(query);

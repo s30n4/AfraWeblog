@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,7 +16,7 @@ namespace AW.Application.Services
 {
     public class LabelService: ILabel
     {
-        private const string EntityName = "Labels";
+        public static string EntityName { get; } = "Labels";
 
         private readonly DbSet<Label> _dbSet;
         private IUnitOfWork UnitOfWork { get; set; }
@@ -79,7 +77,7 @@ namespace AW.Application.Services
 
         public ServiceResult<int> DeleteById(int id)
         {
-            int res = 0;
+            var res = 0;
             var query = _dbSet.Where(a => a.Id == id).FirstOrDefault();
             if (query != null)
             {

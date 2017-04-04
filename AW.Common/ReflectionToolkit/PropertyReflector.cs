@@ -35,10 +35,10 @@ namespace AW.Common.ReflectionToolkit
         {
             if (propertyName.IndexOf(PropertyNameSeparator) > -1)
             {
-                string[] propertyList = propertyName.Split(PropertyNameSeparator);
-                for (int i = 0; i < propertyList.Length; i++)
+                var propertyList = propertyName.Split(PropertyNameSeparator);
+                for (var i = 0; i < propertyList.Length; i++)
                 {
-                    string currentProperty = propertyList[i];
+                    var currentProperty = propertyList[i];
                     targetType = GetTypeImpl(targetType, currentProperty);
                 }
                 return targetType;
@@ -58,10 +58,10 @@ namespace AW.Common.ReflectionToolkit
         {
             if (propertyName.IndexOf(PropertyNameSeparator) > -1)
             {
-                string[] propertyList = propertyName.Split(PropertyNameSeparator);
-                for (int i = 0; i < propertyList.Length; i++)
+                var propertyList = propertyName.Split(PropertyNameSeparator);
+                for (var i = 0; i < propertyList.Length; i++)
                 {
-                    string currentProperty = propertyList[i];
+                    var currentProperty = propertyList[i];
                     target = GetValueImpl(target, currentProperty);
                     if (target == null)
                     {
@@ -87,15 +87,15 @@ namespace AW.Common.ReflectionToolkit
         {
             if (propertyName.IndexOf(PropertyNameSeparator) > -1)
             {
-                object originalTarget = target;
-                string[] propertyList = propertyName.Split(PropertyNameSeparator);
-                for (int i = 0; i < propertyList.Length - 1; i++)
+                var originalTarget = target;
+                var propertyList = propertyName.Split(PropertyNameSeparator);
+                for (var i = 0; i < propertyList.Length - 1; i++)
                 {
                     propertyName = propertyList[i];
                     target = GetValueImpl(target, propertyName);
                     if (target == null)
                     {
-                        string currentFullPropertyNameString = GetPropertyNameString(propertyList, i);
+                        var currentFullPropertyNameString = GetPropertyNameString(propertyList, i);
                         target = Construct(GetType(originalTarget.GetType(), currentFullPropertyNameString));
                         SetValue(originalTarget, currentFullPropertyNameString, target);
                     }
@@ -116,8 +116,8 @@ namespace AW.Common.ReflectionToolkit
         /// <returns>a dot-separated string containing the properties up to the given level</returns>
         private static string GetPropertyNameString(string[] propertyList, int level)
         {
-            StringBuilder currentFullPropertyName = new StringBuilder();
-            for (int j = 0; j <= level; j++)
+            var currentFullPropertyName = new StringBuilder();
+            for (var j = 0; j <= level; j++)
             {
                 if (j > 0)
                 {
@@ -175,10 +175,10 @@ namespace AW.Common.ReflectionToolkit
         /// <returns></returns>
         private PropertyInfo GetPropertyInfo(Type type, string propertyName)
         {
-            PropertyInfoCache propertyInfoCache = GetPropertyInfoCache(type);
+            var propertyInfoCache = GetPropertyInfoCache(type);
             if (!propertyInfoCache.ContainsKey(propertyName))
             {
-                PropertyInfo propertyInfo = GetBestMatchingProperty(propertyName, type);
+                var propertyInfo = GetBestMatchingProperty(propertyName, type);
                 if (propertyInfo == null)
                 {
                     throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Unable to find public property named {0} on type {1}", propertyName, type.FullName), propertyName);
@@ -195,16 +195,16 @@ namespace AW.Common.ReflectionToolkit
         /// </summary>
         private static PropertyInfo GetBestMatchingProperty(string propertyName, Type type)
         {
-            PropertyInfo[] propertyInfos = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+            var propertyInfos = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
 
             PropertyInfo bestMatch = null;
-            int bestMatchDistance = int.MaxValue;
-            for (int i = 0; i < propertyInfos.Length; i++)
+            var bestMatchDistance = int.MaxValue;
+            for (var i = 0; i < propertyInfos.Length; i++)
             {
-                PropertyInfo info = propertyInfos[i];
+                var info = propertyInfos[i];
                 if (info.Name == propertyName)
                 {
-                    int distance = CalculateDistance(type, info.DeclaringType);
+                    var distance = CalculateDistance(type, info.DeclaringType);
                     if (distance == 0)
                     {
                         // as close as we're gonna get...
@@ -229,8 +229,8 @@ namespace AW.Common.ReflectionToolkit
         {
             if (!baseType.GetTypeInfo().IsInterface)
             {
-                Type currType = targetObjectType;
-                int level = 0;
+                var currType = targetObjectType;
+                var level = 0;
                 while (currType != null)
                 {
                     if (baseType == currType)
@@ -279,7 +279,7 @@ namespace AW.Common.ReflectionToolkit
                 {
                     if (!_constructorCache.ContainsKey(type))
                     {
-                        ConstructorInfo constructorInfo = type.GetConstructor(NoTypeParams);
+                        var constructorInfo = type.GetConstructor(NoTypeParams);
                         if (constructorInfo == null)
                         {
                             throw new Exception(string.Format(CultureInfo.InvariantCulture, "Unable to construct instance, no parameterless constructor found in type {0}", type.FullName));

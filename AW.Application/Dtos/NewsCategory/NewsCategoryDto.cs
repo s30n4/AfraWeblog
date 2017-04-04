@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace AW.Application.Dtos.NewsCategory
+﻿namespace AW.Application.Dtos.NewsCategory
 {
     public class NewsCategoryDto
     {
