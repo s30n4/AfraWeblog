@@ -1,22 +1,17 @@
 ﻿using AutoMapper;
 using AW.Application.Services.Contracts;
-using AW.Common;
 using AW.DataLayer.Context;
 using AW.Entities.Domain;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AW.Application.Services
 {
     public class NewsLabelService: INewsLabel
     {
-        private const string EntityName = "Links";
+        public static string EntityName { get; } = "Links";
 
         private readonly DbSet<NewsLabel> _dbSet;
         private IUnitOfWork UnitOfWork { get; set; }
