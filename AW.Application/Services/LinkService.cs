@@ -16,7 +16,7 @@ namespace AW.Application.Services
 {
     public class LinkService: ILink
     {
-        private const string EntityName = "Links";
+        public static string EntityName { get; } = "Links";
 
         private readonly DbSet<Link> _dbSet;
         private IUnitOfWork UnitOfWork { get; set; }

@@ -7,10 +7,5 @@
         public int SkipCount { get; set; }
 
         public int LanguageId { get; set; }
-
-        public BaseSearchRequest()
-        {
-
-        }
     }
 }

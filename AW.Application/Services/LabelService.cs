@@ -16,7 +16,7 @@ namespace AW.Application.Services
 {
     public class LabelService: ILabel
     {
-        private const string EntityName = "Labels";
+        public static string EntityName { get; } = "Labels";
 
         private readonly DbSet<Label> _dbSet;
         private IUnitOfWork UnitOfWork { get; set; }

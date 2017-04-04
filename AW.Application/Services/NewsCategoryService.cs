@@ -16,7 +16,7 @@ namespace AW.Application.Services
 {
     public class NewsCategoryService: INewsCategory
     {
-        private const string EntityName = "NewsCategories";
+        public static string EntityName { get; } = "NewsCategories";
 
         private readonly DbSet<NewsCategory> _dbSet;
         private IUnitOfWork UnitOfWork { get; set; }
