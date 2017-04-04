@@ -16,9 +16,9 @@ namespace AW.Common.WebToolkit
 
         public static SizeF MeasureString(string text, Font f)
         {
-            using (Bitmap bmp = new Bitmap(1, 1))
+            using (var bmp = new Bitmap(1, 1))
             {
-                using (Graphics g = Graphics.FromImage(bmp))
+                using (var g = Graphics.FromImage(bmp))
                 {
                     return g.MeasureString(text, f);
                 }
@@ -28,16 +28,16 @@ namespace AW.Common.WebToolkit
         public static byte[] EMailToImage(string email, string fontName, int fontSize, Color fontColor,
             Color bgColor, FontStyle fontStyle, int dropShadowLevel, Color shadowColor, bool antiAlias, bool rectangle)
         {
-            using (Font font = new Font(new FontFamily(fontName), fontSize, fontStyle, GraphicsUnit.Pixel))
+            using (var font = new Font(new FontFamily(fontName), fontSize, fontStyle, GraphicsUnit.Pixel))
             {
                 var textSize = MeasureString(email, font);
-                int width = ((int)textSize.Width) + 5;
-                int height = ((int)textSize.Height) + 3;
+                var width = ((int)textSize.Width) + 5;
+                var height = ((int)textSize.Height) + 3;
 
-                RectangleF rectF = new RectangleF(0, 0, width, height);
-                using (Bitmap pic = new Bitmap(width, height))
+                var rectF = new RectangleF(0, 0, width, height);
+                using (var pic = new Bitmap(width, height))
                 {
-                    using (Graphics graphics = Graphics.FromImage(pic))
+                    using (var graphics = Graphics.FromImage(pic))
                     {
                         graphics.SmoothingMode = SmoothingMode.AntiAlias;
                         graphics.SmoothingMode = SmoothingMode.HighQuality;
@@ -45,9 +45,9 @@ namespace AW.Common.WebToolkit
                         graphics.InterpolationMode = InterpolationMode.High;
                         if (antiAlias) graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
 
-                        using (SolidBrush fgBrush = new SolidBrush(fontColor))
+                        using (var fgBrush = new SolidBrush(fontColor))
                         {
-                            using (SolidBrush bgBrush = new SolidBrush(bgColor))
+                            using (var bgBrush = new SolidBrush(bgColor))
                             {
                                 if (rectangle)
                                 {
@@ -61,7 +61,7 @@ namespace AW.Common.WebToolkit
 
                                 graphics.DrawRectangle(new Pen(Color.LightGray), new Rectangle(0, 0, width - 1, height - 1));
 
-                                using (StringFormat format = new StringFormat())
+                                using (var format = new StringFormat())
                                 {
                                     format.FormatFlags = StringFormatFlags.NoWrap;
                                     format.Alignment = StringAlignment.Center;

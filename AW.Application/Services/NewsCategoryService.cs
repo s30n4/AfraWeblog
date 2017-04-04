@@ -75,7 +75,7 @@ namespace AW.Application.Services
 
         public ServiceResult<int> DeleteById(int id)
         {
-            int res = 0;
+            var res = 0;
             var query = _dbSet.Where(a => a.Id == id).FirstOrDefault();
             if (query != null && query.Id!=1)
             {
