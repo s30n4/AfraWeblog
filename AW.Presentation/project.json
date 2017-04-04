@@ -24,7 +24,8 @@
     },
     "Microsoft.EntityFrameworkCore": "1.1.1",
     "AW.Application": "1.0.0-*",
-    "AW.Entities": "1.0.0-*"
+    "AW.Entities": "1.0.0-*",
+    "AW.Cors": "1.0.0-*"
   },
 
   "tools": {
