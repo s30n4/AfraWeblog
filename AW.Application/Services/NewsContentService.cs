@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,7 +17,7 @@ namespace AW.Application.Services
 {
     public class NewsContentService: INewsContent
     {
-        private const string EntityName = "NewsContents";
+        public static string EntityName { get; } = "NewsContents";
 
         private readonly DbSet<NewsContent> _dbSet;
         private IUnitOfWork UnitOfWork { get; set; }

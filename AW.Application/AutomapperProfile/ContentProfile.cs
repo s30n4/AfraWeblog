@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using AW.Application.Dtos.NewsContent;
 using AW.Entities.Domain;
-using System;
 
 namespace AW.Application.AutomapperProfile
 {

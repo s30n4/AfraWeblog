@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,7 +16,7 @@ namespace AW.Application.Services
 {
     public class LinkService: ILink
     {
-        private const string EntityName = "Links";
+        public static string EntityName { get; } = "Links";
 
         private readonly DbSet<Link> _dbSet;
         private IUnitOfWork UnitOfWork { get; set; }

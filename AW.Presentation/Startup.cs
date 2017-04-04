@@ -11,7 +11,10 @@ using Newtonsoft.Json.Serialization;
 using System;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using AW.Cors;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using StructureMap;
 
 namespace AW.Presentation
@@ -38,7 +41,7 @@ namespace AW.Presentation
             services.AddSingleton(provider => Configuration);
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(Configuration["ConnectionStrings:SaminDbConnection"]);
+                options.UseSqlServer(Configuration["ConnectionStrings:AfraDbConnection"]);
             });
 
             services.AddMvc()
@@ -57,41 +60,41 @@ namespace AW.Presentation
           
 
             var configuration = new ConfigurationBuilder()
-                //.AddJsonFile(Environment.ContentRootPath + "/Config.json", false, true)
+                .AddJsonFile(Environment.ContentRootPath + "/Config.json", false, true)
                 .AddJsonFile(configName, false, true)
                 .Build();
 
-            //if (configuration.GetValue<bool>("CorsConfig:UseMicrosoftCors"))
-            //{
-            //    services.AddCors(options =>
-            //    {
-            //        options.AddPolicy("AllowSpecificOrigin",
-            //            builder =>
-            //                builder.WithOrigins(configuration.GetValue<string>("CorsConfig:AllowOrigins:0"),
-            //                        configuration.GetValue<string>("CorsConfig:AllowOrigins:1"),
-            //                        configuration.GetValue<string>("CorsConfig:AllowOrigins:2"),
-            //                        configuration.GetValue<string>("CorsConfig:AllowOrigins:3"), configuration.GetValue<string>("CorsConfig:AllowOrigins:4"))
-            //                    .AllowAnyHeader()
-            //                    .AllowAnyMethod());
-            //    });
+            if (configuration.GetValue<bool>("CorsConfig:UseMicrosoftCors"))
+            {
+                services.AddCors(options =>
+                {
+                    options.AddPolicy("AllowSpecificOrigin",
+                        builder =>
+                            builder.WithOrigins(configuration.GetValue<string>("CorsConfig:AllowOrigins:0"),
+                                    configuration.GetValue<string>("CorsConfig:AllowOrigins:1"),
+                                    configuration.GetValue<string>("CorsConfig:AllowOrigins:2"),
+                                    configuration.GetValue<string>("CorsConfig:AllowOrigins:3"), configuration.GetValue<string>("CorsConfig:AllowOrigins:4"))
+                                .AllowAnyHeader()
+                                .AllowAnyMethod());
+                });
 
-            //    services.Configure<MvcOptions>(options =>
-            //    {
-            //        options.Filters.Add(new CorsAuthorizationFilterFactory("AllowSpecificOrigin"));
-            //    });
-            //}
+                services.Configure<MvcOptions>(options =>
+                {
+                    options.Filters.Add(new CorsAuthorizationFilterFactory("AllowSpecificOrigin"));
+                });
+            }
 
-            ////if (configuration.GetValue<bool>("CorsConfig:UseCors"))
-            //{
-            //    CorsService.Add(configuration.GetValue<string>("CorsConfig:CorsProfile"), x =>
-            //    {
-            //        x.AllowAnyHeader().AllowAnyMethod().WithOrigins(
-            //            configuration.GetValue<string>("CorsConfig:AllowOrigins:0"),
-            //            configuration.GetValue<string>("CorsConfig:AllowOrigins:1"),
-            //            configuration.GetValue<string>("CorsConfig:AllowOrigins:3"),
-            //            configuration.GetValue<string>("CorsConfig:AllowOrigins:2"));
-            //    });
-            //}
+            if (configuration.GetValue<bool>("CorsConfig:UseCors"))
+            {
+                CorsService.Add(configuration.GetValue<string>("CorsConfig:CorsProfile"), x =>
+                {
+                    x.AllowAnyHeader().AllowAnyMethod().WithOrigins(
+                        configuration.GetValue<string>("CorsConfig:AllowOrigins:0"),
+                        configuration.GetValue<string>("CorsConfig:AllowOrigins:1"),
+                        configuration.GetValue<string>("CorsConfig:AllowOrigins:3"),
+                        configuration.GetValue<string>("CorsConfig:AllowOrigins:2"));
+                });
+            }
 
             container.Populate(services);
         }
