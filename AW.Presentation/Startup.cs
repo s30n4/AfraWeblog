@@ -1,43 +1,92 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.IO;
+using AW.Application.Dtos.Identity.Settings;
+using AW.Application.Services.Identity;
+using AW.Application.Services.Identity.Logger;
+using AW.Common.GuardToolkit;
+using AW.Common.PersianToolkit;
+using AW.Common.WebToolkit;
+using AW.DataLayer.Context;
+using DNTCaptcha.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 
 namespace AW.Presentation
 {
     public class Startup
     {
+        public IConfigurationRoot Configuration { set; get; }
+
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
+                                .SetBasePath(env.ContentRootPath)
+                                .AddInMemoryCollection(new[]
+                                {
+                                    new KeyValuePair<string,string>("the-key", "the-value")
+                                })
+                                .AddJsonFile("appsettings.json", reloadOnChange: true, optional: false)
+                                .AddJsonFile($"appsettings.{env}.json", optional: true)
+                                .AddEnvironmentVariables();
             Configuration = builder.Build();
         }
 
-        public IConfigurationRoot Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
-            services.AddMvc();
+            services.AddSingleton<IConfigurationRoot>(provider => { return Configuration; });
+            services.Configure<SiteSettings>(options => Configuration.Bind(options));
+
+            services.AddDbContext<ApplicationDbContext>(ServiceLifetime.Scoped);
+
+            // Adds all of the ASP.NET Core Identity related services and configurations at once.
+            services.AddCustomIdentityServices();
+
+            services.AddMvc(options =>
+            {
+                options.UseCustomStringModelBinder();
+            }).AddJsonOptions(jsonOptions =>
+            {
+                jsonOptions.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+            });
+
+            services.AddRazorViewRenderer();
+            services.AddDNTCaptcha();
+            services.AddMvcActionsDiscoveryService();
+            services.AddProtectionProviderService();
+            services.AddCloudscribePagination();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(
+            ILoggerFactory loggerFactory,
+            IApplicationBuilder app,
+            IHostingEnvironment env)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            loggerFactory.AddDbLogger(serviceProvider: app.ApplicationServices, minLevel: LogLevel.Warning);
 
-            app.UseMvc();
+            app.UseExceptionHandler("/error/index/500");
+            app.UseStatusCodePagesWithReExecute("/error/index/{0}");
+
+            // Serve wwwroot as root
+            app.UseFileServer();
+
+
+            // Adds all of the ASP.NET Core Identity related initializations at once.
+            app.UseCustomIdentityServices();
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "areas",
+                    template: "{area:exists}/{controller=Account}/{action=Index}/{id?}");
+
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }

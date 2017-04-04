@@ -14,9 +14,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace AW.Common.WebToolkit
 {
-    /// <summary>
-    /// More info: http://www.dotnettips.info/post/2564
-    /// </summary>
+
     public static class RazorViewToStringRendererExtensions
     {
         public static IServiceCollection AddRazorViewRenderer(this IServiceCollection services)
@@ -27,9 +25,7 @@ namespace AW.Common.WebToolkit
         }
     }
 
-    /// <summary>
-    /// More info: http://www.dotnettips.info/post/2564
-    /// </summary>
+
     public interface IViewRendererService
     {
         Task<string> RenderViewToStringAsync(string viewNameOrPath);
@@ -67,10 +63,10 @@ namespace AW.Common.WebToolkit
         {
             var actionContext = GetActionContext();
 
-            var viewEngineResult = _viewEngine.FindView(actionContext, viewNameOrPath, isMainPage: false);
+            var viewEngineResult = _viewEngine.FindView(actionContext, viewNameOrPath, false);
             if (!viewEngineResult.Success)
             {
-                viewEngineResult = _viewEngine.GetView("~/", viewNameOrPath, isMainPage: false);
+                viewEngineResult = _viewEngine.GetView("~/", viewNameOrPath, false);
                 if (!viewEngineResult.Success)
                 {
                     throw new FileNotFoundException($"Couldn't find '{viewNameOrPath}'");

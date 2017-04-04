@@ -3,6 +3,7 @@ using AW.Entities.Domain;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace AW.DataLayer.Context
@@ -14,8 +15,8 @@ namespace AW.DataLayer.Context
           
             IHttpContextAccessor httpContextAccessor,
             IHostingEnvironment hostingEnvironment,
-            ILogger<ApplicationDbContextBase> logger)
-            : base( httpContextAccessor, hostingEnvironment, logger)
+            ILogger<ApplicationDbContextBase> logger, IConfigurationRoot configuration)
+            : base( httpContextAccessor, hostingEnvironment, logger, configuration)
         {
         }
 

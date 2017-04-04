@@ -72,9 +72,7 @@ namespace AW.Entities.AuditableEntity
             }
         }
 
-        /// <summary>
-        /// More info: http://www.dotnettips.info/post/2507
-        /// </summary>
+       
         public static void SetAuditableEntityPropertyValues(
             this ChangeTracker changeTracker,
             IHttpContextAccessor httpContextAccessor)

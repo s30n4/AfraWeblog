@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace AW.Application.Services
 {
@@ -23,10 +24,10 @@ namespace AW.Application.Services
         private IMapper MapperEngine { get; set; }
 
         public LinkService(IMapper mapper, IHttpContextAccessor httpContextAccessor
-            , IHostingEnvironment hostingEnvironment, ILogger<ApplicationDbContextBase> logger)
+            , IHostingEnvironment hostingEnvironment, ILogger<ApplicationDbContextBase> logger, IConfigurationRoot configuration)
         {
             MapperEngine = mapper;
-            UnitOfWork = new ApplicationDbContext(httpContextAccessor, hostingEnvironment, logger);
+            UnitOfWork = new ApplicationDbContext(httpContextAccessor, hostingEnvironment, logger,configuration);
             _dbSet = UnitOfWork.Set<Link>();
         }
 

@@ -18,7 +18,7 @@ namespace AW.Common.GuardToolkit
             {
                 var validationContext = new ValidationContext(entity);
                 var validationResults = new List<ValidationResult>();
-                if (!Validator.TryValidateObject(entity, validationContext, validationResults, validateAllProperties: true))
+                if (!Validator.TryValidateObject(entity, validationContext, validationResults, true))
                 {
                     foreach (var validationResult in validationResults)
                     {

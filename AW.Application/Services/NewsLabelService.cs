@@ -5,6 +5,7 @@ using AW.Entities.Domain;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace AW.Application.Services
@@ -18,10 +19,10 @@ namespace AW.Application.Services
         private IMapper MapperEngine { get; set; }
 
         public NewsLabelService(IMapper mapper, IHttpContextAccessor httpContextAccessor
-            , IHostingEnvironment hostingEnvironment, ILogger<ApplicationDbContextBase> logger)
+            , IHostingEnvironment hostingEnvironment, ILogger<ApplicationDbContextBase> logger, IConfigurationRoot configuration)
         {
             MapperEngine = mapper;
-            UnitOfWork = new ApplicationDbContext(httpContextAccessor, hostingEnvironment, logger);
+            UnitOfWork = new ApplicationDbContext(httpContextAccessor, hostingEnvironment, logger,configuration);
             _dbSet = UnitOfWork.Set<NewsLabel>();
         }
 

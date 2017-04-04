@@ -10,21 +10,25 @@ using Microsoft.Extensions.Logging;
 using AW.Common.GuardToolkit;
 using AW.Common.PersianToolkit;
 using AW.Entities.AuditableEntity;
+using AW.Entities.Domain.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace AW.DataLayer.Context
 {
  
-    public abstract class ApplicationDbContextBase :  DbContext,  IUnitOfWork
+    public abstract class ApplicationDbContextBase : IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>,  IUnitOfWork
     {
         protected readonly IHostingEnvironment HostingEnvironment;
         protected readonly IHttpContextAccessor HttpContextAccessor;
         protected readonly ILogger<ApplicationDbContextBase> Logger;
-      
+        private readonly IConfigurationRoot _configuration;
+
         protected ApplicationDbContextBase(
            
             IHttpContextAccessor httpContextAccessor,
             IHostingEnvironment hostingEnvironment,
-            ILogger<ApplicationDbContextBase> logger)
+            ILogger<ApplicationDbContextBase> logger, IConfigurationRoot configuration)
         {
           
             HttpContextAccessor = httpContextAccessor;
@@ -34,10 +38,11 @@ namespace AW.DataLayer.Context
             HostingEnvironment.CheckArgumentIsNull(nameof(HostingEnvironment));
 
             Logger = logger;
+            _configuration = configuration;
             Logger.CheckArgumentIsNull(nameof(Logger));
         }
 
-    
+       
 
         public void AddRange<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
         {
@@ -136,14 +141,15 @@ namespace AW.DataLayer.Context
         {
             //TOOD Add connection string (from json)
 
-            optionsBuilder.UseSqlServer(
-                ""
-                , serverDbContextOptionsBuilder =>
-                {
-                    var minutes = (int) TimeSpan.FromMinutes(3).TotalSeconds;
-                    serverDbContextOptionsBuilder.CommandTimeout(minutes);
-                    serverDbContextOptionsBuilder.EnableRetryOnFailure();
-                });
+         
+            //optionsBuilder.UseSqlServer(
+            //      _configuration["ConnectionStrings:ApplicationDbContextConnection"]
+            //    , serverDbContextOptionsBuilder =>
+            //    {
+            //        var minutes = (int) TimeSpan.FromMinutes(3).TotalSeconds;
+            //        serverDbContextOptionsBuilder.CommandTimeout(minutes);
+            //        serverDbContextOptionsBuilder.EnableRetryOnFailure();
+            //    });
 
 
         }

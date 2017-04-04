@@ -109,7 +109,7 @@ namespace AW.Common.WebToolkit
 
         private static List<Attribute> GetAttributes(MemberInfo actionMethodInfo)
         {
-            return actionMethodInfo.GetCustomAttributes(inherit: true)
+            return actionMethodInfo.GetCustomAttributes(true)
                                    .Where(attribute =>
                                     {
                                         var attributeNamespace = attribute.GetType().Namespace;
@@ -121,19 +121,19 @@ namespace AW.Common.WebToolkit
 
         private static bool IsSecuredAction(MemberInfo controllerTypeInfo, MemberInfo actionMethodInfo)
         {
-            var actionHasAllowAnonymousAttribute = actionMethodInfo.GetCustomAttribute<AllowAnonymousAttribute>(inherit: true) != null;
+            var actionHasAllowAnonymousAttribute = actionMethodInfo.GetCustomAttribute<AllowAnonymousAttribute>(true) != null;
             if (actionHasAllowAnonymousAttribute)
             {
                 return false;
             }
 
-            var controllerHasAuthorizeAttribute = controllerTypeInfo.GetCustomAttribute<AuthorizeAttribute>(inherit: true) != null;
+            var controllerHasAuthorizeAttribute = controllerTypeInfo.GetCustomAttribute<AuthorizeAttribute>(true) != null;
             if (controllerHasAuthorizeAttribute)
             {
                 return true;
             }
 
-            var actionMethodHasAuthorizeAttribute = actionMethodInfo.GetCustomAttribute<AuthorizeAttribute>(inherit: true) != null;
+            var actionMethodHasAuthorizeAttribute = actionMethodInfo.GetCustomAttribute<AuthorizeAttribute>(true) != null;
             if (actionMethodHasAuthorizeAttribute)
             {
                 return true;
