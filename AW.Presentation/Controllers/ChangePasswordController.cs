@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using AW.Application.Dtos.Identity;
 using AW.Application.Dtos.Identity.Emails;
-using AW.Application.Dtos.Identity.Settings;
 using AW.Application.Services.Contracts.Identity;
 using AW.Common.GuardToolkit;
 using AW.Common.IdentityToolkit;
 using AW.Common.WebToolkit;
+using AW.DataLayer.Settings;
 using AW.Entities.Domain.Identity;
 using DNTBreadCrumb.Core;
 using DNTPersianUtils.Core;
@@ -60,7 +60,7 @@ namespace AW.Presentation.Controllers
         {
             var userId = this.User.Identity.GetUserId<int>();
             var passwordChangeDate = await _usedPasswordsService.GetLastUserPasswordChangeDateAsync(userId).ConfigureAwait(false);
-            return View(model: new ChangePasswordViewModel
+            return View(new ChangePasswordViewModel
             {
                 LastUserPasswordChangeDate = passwordChangeDate
             });
@@ -76,7 +76,7 @@ namespace AW.Presentation.Controllers
             var user = await _userManager.GetCurrentUserAsync().ConfigureAwait(false);
             var result = await _passwordValidator.ValidateAsync(
                 (UserManager<User>)_userManager, user, newPassword).ConfigureAwait(false);
-            return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
+            return Json(result.Succeeded ? "true" : result.DumpErrors(true));
         }
 
         [HttpPost]
@@ -103,17 +103,17 @@ namespace AW.Presentation.Controllers
                 await _signInManager.RefreshSignInAsync(user).ConfigureAwait(false);
 
                 await _emailSender.SendEmailAsync(
-                           email: user.Email,
-                           subject: "اطلاع رسانی تغییر کلمه‌ی عبور",
-                           viewNameOrPath: "~/Areas/Identity/Views/EmailTemplates/_ChangePasswordNotification.cshtml",
-                           model: new ChangePasswordNotificationViewModel
+                           user.Email,
+                           "اطلاع رسانی تغییر کلمه‌ی عبور",
+                           "~/Areas/Identity/Views/EmailTemplates/_ChangePasswordNotification.cshtml",
+                           new ChangePasswordNotificationViewModel
                            {
                                User = user,
                                EmailSignature = _siteOptions.Value.Smtp.FromName,
                                MessageDateTime = DateTime.UtcNow.ToLongPersianDateTimeString()
                            }).ConfigureAwait(false);
 
-                return RedirectToAction(nameof(Index), "UserCard", routeValues: new { id = user.Id });
+                return RedirectToAction(nameof(Index), "UserCard", new { id = user.Id });
             }
 
             foreach (var error in result.Errors)

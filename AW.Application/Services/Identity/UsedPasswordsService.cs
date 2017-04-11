@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using AW.Application.Dtos.Identity.Settings;
 using AW.Application.Services.Contracts.Identity;
 using AW.Common.GuardToolkit;
 using AW.DataLayer.Context;
+using AW.DataLayer.Settings;
 using AW.Entities.AuditableEntity;
 using AW.Entities.Domain.Identity;
 using Microsoft.AspNetCore.Identity;

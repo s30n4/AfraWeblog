@@ -1,4 +1,4 @@
-namespace AW.Application.Dtos.Identity.Settings
+namespace AW.DataLayer.Settings
 {
     public class UserAvatarImageOptions
     {

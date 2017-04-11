@@ -1,10 +1,13 @@
-﻿using AW.Entities.AuditableEntity;
+﻿using AW.DataLayer.Mappings;
+using AW.DataLayer.Settings;
+using AW.Entities.AuditableEntity;
 using AW.Entities.Domain;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace AW.DataLayer.Context
 {
@@ -15,8 +18,8 @@ namespace AW.DataLayer.Context
           
             IHttpContextAccessor httpContextAccessor,
             IHostingEnvironment hostingEnvironment,
-            ILogger<ApplicationDbContextBase> logger, IConfigurationRoot configuration)
-            : base( httpContextAccessor, hostingEnvironment, logger, configuration)
+            ILogger<ApplicationDbContextBase> logger, IConfigurationRoot configuration  ,  IOptionsSnapshot<SiteSettings> siteSettings)
+            : base( httpContextAccessor, hostingEnvironment, logger, configuration,siteSettings)
         {
         }
 
@@ -33,8 +36,10 @@ namespace AW.DataLayer.Context
             // it should be placed here, otherwise it will rewrite the following settings!
             base.OnModelCreating(builder);
 
+            // Adds all of the ASP.NET Core Identity related mappings at once.
+            builder.AddCustomIdentityMappings(SiteSettings.Value);
 
-
+       
             // This should be placed here, at the end.
             builder.AddAuditableShadowProperties();
         }

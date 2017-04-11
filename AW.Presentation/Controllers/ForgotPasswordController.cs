@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using AW.Application.Dtos.Identity;
 using AW.Application.Dtos.Identity.Emails;
-using AW.Application.Dtos.Identity.Settings;
 using AW.Application.Services.Contracts.Identity;
 using AW.Common.GuardToolkit;
 using AW.Common.IdentityToolkit;
 using AW.Common.WebToolkit;
+using AW.DataLayer.Settings;
 using AW.Entities.Domain.Identity;
 using DNTBreadCrumb.Core;
 using DNTCaptcha.Core;
@@ -73,7 +73,7 @@ namespace AW.Presentation.Controllers
 
             var result = await _passwordValidator.ValidateAsync(
                 (UserManager<User>)_userManager, user, password).ConfigureAwait(false);
-            return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
+            return Json(result.Succeeded ? "true" : result.DumpErrors(true));
         }
 
 
@@ -92,10 +92,10 @@ namespace AW.Presentation.Controllers
 
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user).ConfigureAwait(false);
                 await _emailSender.SendEmailAsync(
-                   email: model.Email,
-                   subject: "بازیابی کلمه‌ی عبور",
-                   viewNameOrPath: "~/Areas/Identity/Views/EmailTemplates/_PasswordReset.cshtml",
-                   model: new PasswordResetViewModel
+                   model.Email,
+                   "بازیابی کلمه‌ی عبور",
+                   "~/Areas/Identity/Views/EmailTemplates/_PasswordReset.cshtml",
+                   new PasswordResetViewModel
                     {
                         UserId = user.Id,
                         Token = code,

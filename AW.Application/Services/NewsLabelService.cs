@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using AW.Application.Services.Contracts;
 using AW.DataLayer.Context;
+using AW.DataLayer.Settings;
 using AW.Entities.Domain;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace AW.Application.Services
 {
@@ -19,10 +21,10 @@ namespace AW.Application.Services
         private IMapper MapperEngine { get; set; }
 
         public NewsLabelService(IMapper mapper, IHttpContextAccessor httpContextAccessor
-            , IHostingEnvironment hostingEnvironment, ILogger<ApplicationDbContextBase> logger, IConfigurationRoot configuration)
+            , IHostingEnvironment hostingEnvironment, ILogger<ApplicationDbContextBase> logger, IConfigurationRoot configuration, IOptionsSnapshot<SiteSettings> siteSettings)
         {
             MapperEngine = mapper;
-            UnitOfWork = new ApplicationDbContext(httpContextAccessor, hostingEnvironment, logger,configuration);
+            UnitOfWork = new ApplicationDbContext(httpContextAccessor, hostingEnvironment, logger,configuration,siteSettings);
             _dbSet = UnitOfWork.Set<NewsLabel>();
         }
 

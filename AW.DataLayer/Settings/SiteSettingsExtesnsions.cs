@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using AW.Common.GuardToolkit;
 
-namespace AW.Application.Dtos.Identity.Settings
+namespace AW.DataLayer.Settings
 {
     public static class SiteSettingsExtesnsions
     {

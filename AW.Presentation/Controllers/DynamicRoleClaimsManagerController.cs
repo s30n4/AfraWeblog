@@ -52,7 +52,7 @@ namespace AW.Presentation.Controllers
             }
 
             var securedControllerActions = _mvcActionsDiscoveryService.GetAllSecuredControllerActionsWithPolicy(ConstantPolicies.DynamicPermission);
-            return View(model: new DynamicRoleClaimsManagerViewModel
+            return View(new DynamicRoleClaimsManagerViewModel
             {
                 SecuredControllerActions = securedControllerActions,
                 RoleIncludeRoleClaims = role
@@ -64,12 +64,12 @@ namespace AW.Presentation.Controllers
         public async Task<IActionResult> Index(DynamicRoleClaimsManagerViewModel model)
         {
             var result = await _roleManager.AddOrUpdateRoleClaimsAsync(
-                roleId: model.RoleId,
-                roleClaimType: ConstantPolicies.DynamicPermissionClaimType,
-                selectedRoleClaimValues: model.ActionIds).ConfigureAwait(false);
+                model.RoleId,
+                ConstantPolicies.DynamicPermissionClaimType,
+                model.ActionIds).ConfigureAwait(false);
             if (!result.Succeeded)
             {
-                return BadRequest(error: result.DumpErrors(useHtmlNewLine: true));
+                return BadRequest(result.DumpErrors(true));
             }
             return Json(new { success = true });
         }

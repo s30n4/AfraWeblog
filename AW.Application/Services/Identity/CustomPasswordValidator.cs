@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AW.Application.Dtos.Identity.Settings;
 using AW.Application.Services.Contracts.Identity;
 using AW.Common.GuardToolkit;
+using AW.DataLayer.Settings;
 using AW.Entities.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;

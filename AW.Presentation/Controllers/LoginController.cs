@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using AW.Application.Dtos.Identity;
-using AW.Application.Dtos.Identity.Settings;
 using AW.Application.Services.Contracts.Identity;
 using AW.Common.GuardToolkit;
+using AW.DataLayer.Settings;
 using DNTBreadCrumb.Core;
 using DNTCaptcha.Core;
 using Microsoft.AspNetCore.Authorization;
@@ -80,7 +80,7 @@ namespace AW.Presentation.Controllers
                                         model.Username,
                                         model.Password,
                                         model.RememberMe,
-                                        lockoutOnFailure: true).ConfigureAwait(false);
+                                        true).ConfigureAwait(false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation(1, $"{model.Username} logged in.");

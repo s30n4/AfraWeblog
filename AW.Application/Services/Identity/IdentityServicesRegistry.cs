@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Security.Principal;
-using AW.Application.Dtos.Identity.Settings;
 using AW.Application.Services.Contracts.Identity;
 using AW.Application.Services.Identity.Logger;
 using AW.Common.GuardToolkit;
 using AW.DataLayer.Context;
+using AW.DataLayer.Settings;
 using AW.Entities.Domain.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -134,8 +134,8 @@ namespace AW.Application.Services.Identity
             services.AddAuthorization(opts =>
             {
                 opts.AddPolicy(
-                    name: ConstantPolicies.DynamicPermission,
-                    configurePolicy: policy =>
+                    ConstantPolicies.DynamicPermission,
+                    policy =>
                     {
                         policy.RequireAuthenticatedUser();
                         policy.Requirements.Add(new DynamicPermissionRequirement());
@@ -207,7 +207,7 @@ namespace AW.Application.Services.Identity
                 {
                     var cacheOptions = cookieOptions.DistributedSqlServerCacheOptions;
                     var connectionString = string.IsNullOrWhiteSpace(cacheOptions.ConnectionString) ?
-                            siteSettings.GetDbConnectionString(webRootPath: string.Empty) :
+                            siteSettings.GetDbConnectionString(string.Empty) :
                             cacheOptions.ConnectionString;
                     options.ConnectionString = connectionString;
                     options.SchemaName = cacheOptions.SchemaName;

@@ -1,7 +1,8 @@
 ﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
-namespace AW.Application.Dtos.Identity.Settings
+namespace AW.DataLayer.Settings
 {
     public class SiteSettings
     {

@@ -3,12 +3,12 @@ using System.IO;
 using System.Threading.Tasks;
 using AW.Application.Dtos.Identity;
 using AW.Application.Dtos.Identity.Emails;
-using AW.Application.Dtos.Identity.Settings;
 using AW.Application.Services.Contracts.Identity;
 using AW.Application.Services.Identity;
 using AW.Common.GuardToolkit;
 using AW.Common.IdentityToolkit;
 using AW.Common.WebToolkit;
+using AW.DataLayer.Settings;
 using AW.Entities.Domain.Identity;
 using DNTBreadCrumb.Core;
 using DNTPersianUtils.Core;
@@ -88,14 +88,14 @@ namespace AW.Presentation.Controllers
             }
 
             var user = await _userManager.FindByIdAsync(id.ToString()).ConfigureAwait(false);
-            return await RenderForm(user, isAdminEdit: true).ConfigureAwait(false);
+            return await RenderForm(user, true).ConfigureAwait(false);
         }
 
         [BreadCrumb(Title = "ایندکس", Order = 1)]
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetCurrentUserAsync().ConfigureAwait(false);
-            return await RenderForm(user, isAdminEdit: false).ConfigureAwait(false);
+            return await RenderForm(user, false).ConfigureAwait(false);
         }
 
         [HttpPost]
@@ -133,17 +133,17 @@ namespace AW.Presentation.Controllers
 
                 if (!await UpdateUserName(model, user).ConfigureAwait(false))
                 {
-                    return View(viewName: nameof(Index), model: model);
+                    return View(nameof(Index), model);
                 }
 
                 if (!await UpdateUserAvatarImage(model, user).ConfigureAwait(false))
                 {
-                    return View(viewName: nameof(Index), model: model);
+                    return View(nameof(Index), model);
                 }
 
                 if (!await UpdateUserEmail(model, user).ConfigureAwait(false))
                 {
-                    return View(viewName: nameof(Index), model: model);
+                    return View(nameof(Index), model);
                 }
 
                 var updateResult = await _userManager.UpdateAsync(user).ConfigureAwait(false);
@@ -156,22 +156,22 @@ namespace AW.Presentation.Controllers
                     }
 
                     await _emailSender.SendEmailAsync(
-                           email: user.Email,
-                           subject: "اطلاع رسانی به روز رسانی مشخصات کاربری",
-                           viewNameOrPath: "~/Areas/Identity/Views/EmailTemplates/_UserProfileUpdateNotification.cshtml",
-                           model: new UserProfileUpdateNotificationViewModel
+                           user.Email,
+                           "اطلاع رسانی به روز رسانی مشخصات کاربری",
+                           "~/Areas/Identity/Views/EmailTemplates/_UserProfileUpdateNotification.cshtml",
+                           new UserProfileUpdateNotificationViewModel
                            {
                                User = user,
                                EmailSignature = _siteOptions.Value.Smtp.FromName,
                                MessageDateTime = DateTime.UtcNow.ToLongPersianDateTimeString()
                            }).ConfigureAwait(false);
 
-                    return RedirectToAction(nameof(Index), "UserCard", routeValues: new { id = user.Id });
+                    return RedirectToAction(nameof(Index), "UserCard", new { id = user.Id });
                 }
 
-                ModelState.AddModelError("", updateResult.DumpErrors(useHtmlNewLine: true));
+                ModelState.AddModelError("", updateResult.DumpErrors(true));
             }
-            return View(viewName: nameof(Index), model: model);
+            return View(nameof(Index), model);
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace AW.Presentation.Controllers
             user.Email = email;
 
             var result = await _userValidator.ValidateAsync((UserManager<User>)_userManager, user).ConfigureAwait(false);
-            return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
+            return Json(result.Succeeded ? "true" : result.DumpErrors(true));
         }
 
         private static void UpdateUserBirthDate(UserProfileViewModel model, User user)
@@ -238,7 +238,7 @@ namespace AW.Presentation.Controllers
                 userProfile.DateOfBirthDay = pDateParts.Item3;
             }
 
-            return View(viewName: nameof(Index), model: userProfile);
+            return View(nameof(Index), userProfile);
         }
 
         private async Task<bool> UpdateUserAvatarImage(UserProfileViewModel model, User user)
@@ -249,7 +249,7 @@ namespace AW.Presentation.Controllers
             if (photoFile != null && photoFile.Length > 0)
             {
                 var imageOptions = _siteOptions.Value.UserAvatarImageOptions;
-                if (!photoFile.IsValidImageFile(maxWidth: imageOptions.MaxWidth, maxHeight: imageOptions.MaxHeight))
+                if (!photoFile.IsValidImageFile(imageOptions.MaxWidth, imageOptions.MaxHeight))
                 {
                     this.ModelState.AddModelError("",
                         $"حداکثر اندازه تصویر قابل ارسال {imageOptions.MaxHeight} در {imageOptions.MaxWidth} پیکسل است");
@@ -278,7 +278,7 @@ namespace AW.Presentation.Controllers
                     await _userValidator.ValidateAsync((UserManager<User>)_userManager, user).ConfigureAwait(false);
                 if (!userValidator.Succeeded)
                 {
-                    ModelState.AddModelError("", userValidator.DumpErrors(useHtmlNewLine: true));
+                    ModelState.AddModelError("", userValidator.DumpErrors(true));
                     return false;
                 }
 
@@ -286,10 +286,10 @@ namespace AW.Presentation.Controllers
 
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user).ConfigureAwait(false);
                 await _emailSender.SendEmailAsync(
-                    email: user.Email,
-                    subject: "لطفا اکانت خود را تائید کنید",
-                    viewNameOrPath: "~/Areas/Identity/Views/EmailTemplates/_RegisterEmailConfirmation.cshtml",
-                    model: new RegisterEmailConfirmationViewModel
+                    user.Email,
+                    "لطفا اکانت خود را تائید کنید",
+                    "~/Areas/Identity/Views/EmailTemplates/_RegisterEmailConfirmation.cshtml",
+                    new RegisterEmailConfirmationViewModel
                     {
                         User = user,
                         EmailConfirmationToken = code,
@@ -310,7 +310,7 @@ namespace AW.Presentation.Controllers
                     await _userValidator.ValidateAsync((UserManager<User>)_userManager, user).ConfigureAwait(false);
                 if (!userValidator.Succeeded)
                 {
-                    ModelState.AddModelError("", userValidator.DumpErrors(useHtmlNewLine: true));
+                    ModelState.AddModelError("", userValidator.DumpErrors(true));
                     return false;
                 }
             }

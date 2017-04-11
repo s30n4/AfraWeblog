@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using AW.Application.Dtos.Identity;
 using AW.Application.Dtos.Identity.Emails;
-using AW.Application.Dtos.Identity.Settings;
 using AW.Application.Services.Contracts.Identity;
 using AW.Common.GuardToolkit;
 using AW.Common.IdentityToolkit;
 using AW.Common.WebToolkit;
+using AW.DataLayer.Settings;
 using AW.Entities.Domain.Identity;
 using DNTBreadCrumb.Core;
 using DNTCaptcha.Core;
@@ -66,7 +66,7 @@ namespace AW.Presentation.Controllers
         {
             var result = await _userValidator.ValidateAsync(
                 (UserManager<User>)_userManager, new User { UserName = username, Email = email }).ConfigureAwait(false);
-            return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
+            return Json(result.Succeeded ? "true" : result.DumpErrors(true));
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace AW.Presentation.Controllers
         {
             var result = await _passwordValidator.ValidateAsync(
                 (UserManager<User>)_userManager, new User { UserName = username }, password).ConfigureAwait(false);
-            return Json(result.Succeeded ? "true" : result.DumpErrors(useHtmlNewLine: true));
+            return Json(result.Succeeded ? "true" : result.DumpErrors(true));
         }
 
         [BreadCrumb(Title = "تائید ایمیل", Order = 1)]
@@ -136,10 +136,10 @@ namespace AW.Presentation.Controllers
                         //ControllerExtensions.ShortControllerName<RegisterController>(), //todo: use everywhere .................
 
                         await _emailSender.SendEmailAsync(
-                           email: user.Email,
-                           subject: "لطفا اکانت خود را تائید کنید",
-                           viewNameOrPath: "~/Areas/Identity/Views/EmailTemplates/_RegisterEmailConfirmation.cshtml",
-                           model: new RegisterEmailConfirmationViewModel
+                           user.Email,
+                           "لطفا اکانت خود را تائید کنید",
+                           "~/Areas/Identity/Views/EmailTemplates/_RegisterEmailConfirmation.cshtml",
+                           new RegisterEmailConfirmationViewModel
                            {
                                User = user,
                                EmailConfirmationToken = code,

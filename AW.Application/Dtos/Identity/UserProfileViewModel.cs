@@ -35,7 +35,7 @@ namespace AW.Application.Dtos.Identity
         public string Email { get; set; }
 
         [Display(Name = "تصویر")]
-        [StringLength(maximumLength: 1000, ErrorMessage = "حداکثر طول آدرس تصویر 1000 حرف است.")]
+        [StringLength(1000, ErrorMessage = "حداکثر طول آدرس تصویر 1000 حرف است.")]
         public string PhotoFileName { set; get; }
 
         [UploadFileExtensions(AllowedImages,

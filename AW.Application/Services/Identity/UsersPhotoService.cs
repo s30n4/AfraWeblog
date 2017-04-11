@@ -1,8 +1,8 @@
 ﻿using System.IO;
-using AW.Application.Dtos.Identity.Settings;
 using AW.Application.Services.Contracts.Identity;
 using AW.Common.GuardToolkit;
 using AW.Common.IdentityToolkit;
+using AW.DataLayer.Settings;
 using AW.Entities.Domain.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using AW.Application.Dtos.Identity.Settings;
 using AW.Application.Services.Contracts.Identity;
 using AW.Common.GuardToolkit;
 using AW.Common.IdentityToolkit;
 using AW.DataLayer.Context;
+using AW.DataLayer.Settings;
 using AW.Entities.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -140,7 +140,7 @@ namespace AW.Application.Services.Identity
                 return IdentityResult.Failed();
             }
 
-            var setLockoutResult = await _applicationUserManager.SetLockoutEnabledAsync(adminUser, enabled: false).ConfigureAwait(false);
+            var setLockoutResult = await _applicationUserManager.SetLockoutEnabledAsync(adminUser, false).ConfigureAwait(false);
             if (setLockoutResult == IdentityResult.Failed())
             {
                 _logger.LogError($"{thisMethodName}: adminUser SetLockoutEnabledAsync failed. {setLockoutResult.DumpErrors()}");

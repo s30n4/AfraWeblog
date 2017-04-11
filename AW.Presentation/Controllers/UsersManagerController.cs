@@ -45,7 +45,7 @@ namespace AW.Presentation.Controllers
                 }).ConfigureAwait(false);
             if (!result.Succeeded)
             {
-                return BadRequest(error: result.DumpErrors(useHtmlNewLine: true));
+                return BadRequest(result.DumpErrors(true));
             }
 
             return await ReturnUserCardPartialView(thisUser).ConfigureAwait(false);
@@ -64,7 +64,7 @@ namespace AW.Presentation.Controllers
                 }).ConfigureAwait(false);
             if (!result.Succeeded)
             {
-                return BadRequest(error: result.DumpErrors(useHtmlNewLine: true));
+                return BadRequest(result.DumpErrors(true));
             }
 
             return await ReturnUserCardPartialView(thisUser).ConfigureAwait(false);
@@ -79,7 +79,7 @@ namespace AW.Presentation.Controllers
                 userId, roleIds, user => thisUser = user).ConfigureAwait(false);
             if (!result.Succeeded)
             {
-                return BadRequest(error: result.DumpErrors(useHtmlNewLine: true));
+                return BadRequest(result.DumpErrors(true));
             }
 
             return await ReturnUserCardPartialView(thisUser).ConfigureAwait(false);
@@ -98,7 +98,7 @@ namespace AW.Presentation.Controllers
                         }).ConfigureAwait(false);
             if (!result.Succeeded)
             {
-                return BadRequest(error: result.DumpErrors(useHtmlNewLine: true));
+                return BadRequest(result.DumpErrors(true));
             }
 
             return await ReturnUserCardPartialView(thisUser).ConfigureAwait(false);
@@ -117,7 +117,7 @@ namespace AW.Presentation.Controllers
                 }).ConfigureAwait(false);
             if (!result.Succeeded)
             {
-                return BadRequest(error: result.DumpErrors(useHtmlNewLine: true));
+                return BadRequest(result.DumpErrors(true));
             }
 
             return await ReturnUserCardPartialView(thisUser).ConfigureAwait(false);
@@ -136,7 +136,7 @@ namespace AW.Presentation.Controllers
                 }).ConfigureAwait(false);
             if (!result.Succeeded)
             {
-                return BadRequest(error: result.DumpErrors(useHtmlNewLine: true));
+                return BadRequest(result.DumpErrors(true));
             }
 
             return await ReturnUserCardPartialView(thisUser).ConfigureAwait(false);
@@ -146,11 +146,11 @@ namespace AW.Presentation.Controllers
         public async Task<IActionResult> Index(int? page = 1, string field = "Id", SortOrder order = SortOrder.Ascending)
         {
             var model = await _userManager.GetPagedUsersListAsync(
-                pageNumber: page.Value - 1,
-                recordsPerPage: DefaultPageSize,
-                sortByField: field,
-                sortOrder: order,
-                showAllUsers: true).ConfigureAwait(false);
+                page.Value - 1,
+                DefaultPageSize,
+                field,
+                order,
+                true).ConfigureAwait(false);
 
             model.Paging.CurrentPage = page.Value;
             model.Paging.ItemsPerPage = DefaultPageSize;

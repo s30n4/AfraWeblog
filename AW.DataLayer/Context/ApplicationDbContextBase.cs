@@ -9,10 +9,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using AW.Common.GuardToolkit;
 using AW.Common.PersianToolkit;
+using AW.DataLayer.Settings;
 using AW.Entities.AuditableEntity;
 using AW.Entities.Domain.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace AW.DataLayer.Context
 {
@@ -23,14 +25,18 @@ namespace AW.DataLayer.Context
         protected readonly IHttpContextAccessor HttpContextAccessor;
         protected readonly ILogger<ApplicationDbContextBase> Logger;
         private readonly IConfigurationRoot _configuration;
+        protected readonly IOptionsSnapshot<SiteSettings> SiteSettings;
+
 
         protected ApplicationDbContextBase(
            
             IHttpContextAccessor httpContextAccessor,
             IHostingEnvironment hostingEnvironment,
-            ILogger<ApplicationDbContextBase> logger, IConfigurationRoot configuration)
+            ILogger<ApplicationDbContextBase> logger, IConfigurationRoot configuration, IOptionsSnapshot<SiteSettings> siteSettings)
         {
-          
+            SiteSettings = siteSettings;
+            SiteSettings.CheckArgumentIsNull(nameof(SiteSettings));
+
             HttpContextAccessor = httpContextAccessor;
             HttpContextAccessor.CheckArgumentIsNull(nameof(HttpContextAccessor));
 
@@ -139,17 +145,31 @@ namespace AW.DataLayer.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //TOOD Add connection string (from json)
+            var siteSettingsValue = SiteSettings.Value;
+            siteSettingsValue.CheckArgumentIsNull(nameof(siteSettingsValue));
+            var connectionString = siteSettingsValue.GetDbConnectionString(HostingEnvironment.WebRootPath);
 
-         
-            //optionsBuilder.UseSqlServer(
-            //      _configuration["ConnectionStrings:ApplicationDbContextConnection"]
-            //    , serverDbContextOptionsBuilder =>
-            //    {
-            //        var minutes = (int) TimeSpan.FromMinutes(3).TotalSeconds;
-            //        serverDbContextOptionsBuilder.CommandTimeout(minutes);
-            //        serverDbContextOptionsBuilder.EnableRetryOnFailure();
-            //    });
+            switch (siteSettingsValue.ActiveDatabase)
+            {
+                case ActiveDatabase.InMemoryDatabase:
+                    optionsBuilder.UseInMemoryDatabase();
+                    break;
+
+                case ActiveDatabase.LocalDb:
+                case ActiveDatabase.SqlServer:
+                    optionsBuilder.UseSqlServer(
+                        connectionString
+                        , serverDbContextOptionsBuilder =>
+                        {
+                            var minutes = (int)TimeSpan.FromMinutes(3).TotalSeconds;
+                            serverDbContextOptionsBuilder.CommandTimeout(minutes);
+                            serverDbContextOptionsBuilder.EnableRetryOnFailure();
+                        });
+                    break;
+
+                default:
+                    throw new NotSupportedException("Please set the ActiveDatabase in appsettings.json file.");
+            }
 
 
         }

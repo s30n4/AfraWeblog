@@ -12,7 +12,9 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AW.DataLayer.Settings;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace AW.Application.Services
 {
@@ -25,10 +27,10 @@ namespace AW.Application.Services
         private IMapper MapperEngine { get; set; }
 
         public CommentService(IMapper mapper, IHttpContextAccessor httpContextAccessor
-            , IHostingEnvironment hostingEnvironment, ILogger<ApplicationDbContextBase> logger, IConfigurationRoot configuration)
+            , IHostingEnvironment hostingEnvironment, ILogger<ApplicationDbContextBase> logger, IConfigurationRoot configuration, IOptionsSnapshot<SiteSettings> siteSettings)
         {
             MapperEngine = mapper;
-            UnitOfWork = new ApplicationDbContext(httpContextAccessor, hostingEnvironment, logger,configuration);
+            UnitOfWork = new ApplicationDbContext(httpContextAccessor, hostingEnvironment, logger,configuration,siteSettings);
             _dbSet = UnitOfWork.Set<Comment>();
         }
 

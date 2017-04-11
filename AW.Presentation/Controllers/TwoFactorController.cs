@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using AW.Application.Dtos.Identity;
 using AW.Application.Dtos.Identity.Emails;
-using AW.Application.Dtos.Identity.Settings;
 using AW.Application.Services.Contracts.Identity;
 using AW.Common.GuardToolkit;
+using AW.DataLayer.Settings;
 using DNTBreadCrumb.Core;
 using DNTPersianUtils.Core;
 using Microsoft.AspNetCore.Authorization;
@@ -66,10 +66,10 @@ namespace AW.Presentation.Controllers
             }
 
             await _emailSender.SendEmailAsync(
-                               email: user.Email,
-                               subject: "کد جدید اعتبارسنجی دو مرحله‌ای",
-                               viewNameOrPath: "~/Areas/Identity/Views/EmailTemplates/_TwoFactorSendCode.cshtml",
-                               model: new TwoFactorSendCodeViewModel
+                               user.Email,
+                               "کد جدید اعتبارسنجی دو مرحله‌ای",
+                               "~/Areas/Identity/Views/EmailTemplates/_TwoFactorSendCode.cshtml",
+                               new TwoFactorSendCodeViewModel
                                 {
                                    Token = code,
                                    EmailSignature = _siteOptions.Value.Smtp.FromName,

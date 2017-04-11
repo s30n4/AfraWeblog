@@ -7,8 +7,18 @@
     "AW.Common": "1.0.0-*",
     "Microsoft.EntityFrameworkCore": "1.1.1",
     "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.1.1",
+    "Newtonsoft.Json": "10.0.2",
+    "Microsoft.EntityFrameworkCore.SqlServer.Design": "1.1.1",
     "Microsoft.EntityFrameworkCore.SqlServer": "1.1.1",
-    "Newtonsoft.Json": "10.0.2"
+    "Microsoft.EntityFrameworkCore.Relational": "1.1.1"
+  },
+  "tools": {
+    "Microsoft.EntityFrameworkCore.Tools.DotNet": {
+      "version": "1.1.0-preview4-final",
+      "imports": [
+        "portable-net45+win8"
+      ]
+    }
   },
 
   "frameworks": {

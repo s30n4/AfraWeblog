@@ -1,18 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using AW.Application.Dtos.Identity.Settings;
 using AW.Application.Services.Identity;
 using AW.Application.Services.Identity.Logger;
 using AW.Common.GuardToolkit;
 using AW.Common.PersianToolkit;
 using AW.Common.WebToolkit;
 using AW.DataLayer.Context;
+using AW.DataLayer.Settings;
 using DNTCaptcha.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 
 namespace AW.Presentation
@@ -30,14 +28,15 @@ namespace AW.Presentation
                                     new KeyValuePair<string,string>("the-key", "the-value")
                                 })
                                 .AddJsonFile("appsettings.json", reloadOnChange: true, optional: false)
-                                .AddJsonFile($"appsettings.{env}.json", optional: true)
+                                .AddJsonFile($"appsettings.{env}.json", true)
                                 .AddEnvironmentVariables();
             Configuration = builder.Build();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IConfigurationRoot>(provider => { return Configuration; });
+
+            services.AddSingleton(provider => Configuration);
             services.Configure<SiteSettings>(options => Configuration.Bind(options));
 
             services.AddDbContext<ApplicationDbContext>(ServiceLifetime.Scoped);
@@ -65,7 +64,7 @@ namespace AW.Presentation
             IApplicationBuilder app,
             IHostingEnvironment env)
         {
-            loggerFactory.AddDbLogger(serviceProvider: app.ApplicationServices, minLevel: LogLevel.Warning);
+            loggerFactory.AddDbLogger(app.ApplicationServices, LogLevel.Warning);
 
             app.UseExceptionHandler("/error/index/500");
             app.UseStatusCodePagesWithReExecute("/error/index/{0}");
@@ -79,13 +78,10 @@ namespace AW.Presentation
 
             app.UseMvc(routes =>
             {
+                
                 routes.MapRoute(
-                    name: "areas",
-                    template: "{area:exists}/{controller=Account}/{action=Index}/{id?}");
-
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    "default",
+                    "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

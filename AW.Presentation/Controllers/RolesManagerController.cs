@@ -49,7 +49,7 @@ namespace AW.Presentation.Controllers
                 ModelState.AddModelError("", RoleNotFound);
                 return PartialView("_Create");
             }
-            return PartialView("_Create", model: new RoleViewModel { Id = role.Id.ToString(), Name = role.Name });
+            return PartialView("_Create", new RoleViewModel { Id = role.Id.ToString(), Name = role.Name });
         }
 
         [AjaxOnly]
@@ -75,7 +75,7 @@ namespace AW.Presentation.Controllers
                     ModelState.AddErrorsFromResult(result);
                 }
             }
-            return PartialView("_Create", model: model);
+            return PartialView("_Create", model);
         }
 
         [AjaxOnly]
@@ -92,7 +92,7 @@ namespace AW.Presentation.Controllers
                 }
                 ModelState.AddErrorsFromResult(result);
             }
-            return PartialView("_Create", model: model);
+            return PartialView("_Create", model);
         }
 
         [AjaxOnly]
@@ -109,7 +109,7 @@ namespace AW.Presentation.Controllers
                 ModelState.AddModelError("", RoleNotFound);
                 return PartialView("_Delete");
             }
-            return PartialView("_Delete", model: new RoleViewModel { Id = role.Id.ToString(), Name = role.Name });
+            return PartialView("_Delete", new RoleViewModel { Id = role.Id.ToString(), Name = role.Name });
         }
 
         [AjaxOnly]
@@ -131,7 +131,7 @@ namespace AW.Presentation.Controllers
                 }
                 ModelState.AddErrorsFromResult(result);
             }
-            return PartialView("_Delete", model: model);
+            return PartialView("_Delete", model);
         }
 
         [BreadCrumb(Title = "لیست کاربران دارای نقش", Order = 1)]
@@ -143,12 +143,12 @@ namespace AW.Presentation.Controllers
             }
 
             var model = await _roleManager.GetPagedApplicationUsersInRoleListAsync(
-                roleId: id.Value,
-                pageNumber: page.Value - 1,
-                recordsPerPage: DefaultPageSize,
-                sortByField: field,
-                sortOrder: order,
-                showAllUsers: true).ConfigureAwait(false);
+                id.Value,
+                page.Value - 1,
+                DefaultPageSize,
+                field,
+                order,
+                true).ConfigureAwait(false);
 
             model.Paging.CurrentPage = page.Value;
             model.Paging.ItemsPerPage = DefaultPageSize;
