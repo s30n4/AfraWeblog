@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 using AW.Application.Services.Contracts.Identity;
 using AW.Common.GuardToolkit;
 using AW.Common.IdentityToolkit;
-using AW.DataLayer.Context;
-using AW.DataLayer.Settings;
 using AW.Entities.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using AW.DataLayer.Context;
+using AW.DataLayer.Settings;
 
 namespace AW.Application.Services.Identity
 {
